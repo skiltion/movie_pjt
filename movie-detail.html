@@ -66,6 +66,64 @@
       border-radius: 5px;
       text-decoration: none;
     }
+
+    .comments-section {
+      margin-top: 40px;
+    }
+
+    .comment {
+      background-color: #333;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .comment h4 {
+      margin: 0;
+      color: #e50914;
+    }
+
+    .comment p {
+      font-size: 1em;
+      color: #bbb;
+    }
+
+    .comment-time {
+      font-size: 0.9em;
+      color: #777;
+    }
+
+    .comment-form {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .comment-form input,
+    .comment-form textarea {
+      width: 300px;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #333;
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .comment-form button {
+      background-color: #e50914;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .comment-form button:hover {
+      background-color: #f40612;
+    }
   </style>
 </head>
 <body>
@@ -83,18 +141,27 @@
     <a href="index.html" class="back-button">목록으로 돌아가기</a>
   </div>
 
+  <div class="comments-section">
+    <h2>댓글</h2>
+    <div id="comments-list"></div>
+
+    <div class="comment-form">
+      <input type="text" id="username" placeholder="이름" />
+      <textarea id="comment-content" placeholder="댓글을 작성하세요..." rows="4"></textarea>
+      <button id="submit-comment">댓글 작성</button>
+    </div>
+  </div>
+
   <script>
-    // 영화 ID를 URL에서 추출
     const urlParams = new URLSearchParams(window.location.search);
     const movieId = urlParams.get('id');
 
-    // 영화 상세 정보를 가져오는 함수
+    // 영화 상세 정보 가져오기
     async function fetchMovieDetails() {
       try {
         const response = await fetch(`http://localhost:3000/movies/${movieId}`);
         const movie = await response.json();
 
-        // 영화 상세 정보 표시
         document.querySelector('.movie-detail-header').textContent = movie.original_title;
         document.querySelector('#movie-poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
         document.querySelector('#movie-vote-average').textContent = movie.vote_average;
@@ -106,8 +173,69 @@
       }
     }
 
-    // 페이지 로드 시 영화 상세 정보 가져오기
-    window.onload = fetchMovieDetails;
+    // 댓글 목록 가져오기
+    async function fetchComments() {
+      try {
+        const response = await fetch(`http://localhost:3000/movies/${movieId}/comments`);
+        const comments = await response.json();
+
+        const commentsList = document.getElementById('comments-list');
+        commentsList.innerHTML = ''; // 기존 댓글 삭제
+
+        comments.forEach(comment => {
+          const commentDiv = document.createElement('div');
+          commentDiv.classList.add('comment');
+          const commentTime = new Date(comment.created_at);
+          const formattedTime = commentTime.toLocaleString(); // 날짜와 시간을 로컬 시간으로 포맷
+
+          commentDiv.innerHTML = `
+            <h4>${comment.username}</h4>
+            <p>${comment.content}</p>
+            <div class="comment-time">${formattedTime}</div>
+          `;
+          commentsList.appendChild(commentDiv);
+        });
+      } catch (error) {
+        console.error('댓글을 불러오는 데 실패했습니다:', error);
+        alert('댓글을 불러오는 데 문제가 발생했습니다.');
+      }
+    }
+
+    // 댓글 작성하기
+    async function submitComment() {
+      const username = document.getElementById('username').value;
+      const content = document.getElementById('comment-content').value;
+
+      if (!username || !content) {
+        alert('사용자 이름과 댓글 내용을 입력하세요.');
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/movies/${movieId}/comments`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, content }),
+        });
+
+        const newComment = await response.json();
+        fetchComments(); // 댓글 목록 새로 고침
+      } catch (error) {
+        console.error('댓글 작성에 실패했습니다:', error);
+        alert('댓글을 작성하는 데 문제가 발생했습니다.');
+      }
+    }
+
+    // 댓글 작성 버튼 클릭 이벤트
+    document.getElementById('submit-comment').addEventListener('click', submitComment);
+
+    // 페이지 로드 시 영화 정보와 댓글 불러오기
+    window.onload = () => {
+      fetchMovieDetails();
+      fetchComments();
+    };
   </script>
 
 </body>

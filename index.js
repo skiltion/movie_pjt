@@ -51,3 +51,42 @@ app.get('/movies/:id', (req, res) => {
       }
     });
   });
+
+// 댓글 작성 API
+app.post('/movies/:id/comments', express.json(), (req, res) => {
+    const movieId = req.params.id;
+    const { username, content } = req.body;
+  
+    if (!username || !content) {
+      return res.status(400).send('사용자 이름과 댓글 내용을 모두 입력해야 합니다.');
+    }
+  
+    const query = `INSERT INTO comments (movie_id, username, content) VALUES (?, ?, ?)`;
+  
+    db.run(query, [movieId, username, content], function (err) {
+      if (err) {
+        console.error('댓글 저장 실패:', err.message);
+        return res.status(500).send('서버 오류');
+      }
+  
+      res.status(201).send({ id: this.lastID, movieId, username, content, created_at: new Date() });
+    });
+  });
+
+// 영화의 댓글을 가져오는 API
+// 영화의 댓글을 가져오는 API
+app.get('/movies/:id/comments', (req, res) => {
+    const movieId = req.params.id;
+  
+    const query = `SELECT * FROM comments WHERE movie_id = ? ORDER BY created_at DESC`;
+  
+    db.all(query, [movieId], (err, rows) => {
+      if (err) {
+        console.error('댓글을 가져오는 데 실패했습니다:', err.message);
+        return res.status(500).send('서버 오류');
+      }
+  
+      res.json(rows);
+    });
+  });
+  

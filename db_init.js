@@ -70,6 +70,25 @@ movieData.forEach((movie) => {
   });
 });
 
+const createCommentsTable = `
+  CREATE TABLE IF NOT EXISTS comments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    movie_id INTEGER NOT NULL,
+    username TEXT NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (movie_id) REFERENCES movies (id)
+  );
+`;
+
+db.run(createCommentsTable, (err) => {
+  if (err) {
+    console.error('테이블 생성 실패:', err.message);
+  } else {
+    console.log('comments 테이블 생성 완료');
+  }
+});
+
 // 데이터베이스 연결 종료
 db.close((err) => {
   if (err) {
