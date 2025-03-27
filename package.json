@@ -1,0 +1,27 @@
+{
+  "name": "movie_pjt",
+  "version": "1.0.0",
+  "description": "1. 영화 리뷰를 작성할 수 있는 프로젝트를 만듬!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skiltion/movie_pjt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/skiltion/movie_pjt/issues"
+  },
+  "homepage": "https://github.com/skiltion/movie_pjt#readme",
+  "dependencies": {
+    "axios": "^1.8.4",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.2",
+    "sqlite3": "^5.1.7",
+    "xlsx": "^0.18.5"
+  }
+}
