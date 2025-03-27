@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>영화 상세 정보</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #141414;
+      color: white;
+      text-align: center;
+    }
+
+    .movie-detail-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #1c1c1c;
+      border-radius: 10px;
+    }
+
+    .movie-detail-header {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #e50914;
+    }
+
+    .movie-detail-content {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .movie-poster {
+      width: 300px;
+      height: 450px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-right: 30px;
+    }
+
+    .movie-info {
+      max-width: 400px;
+      text-align: left;
+      color: #ddd;
+    }
+
+    .movie-info div {
+      margin-bottom: 15px;
+    }
+
+    .overview {
+      font-size: 1.1em;
+      font-weight: normal;
+      color: #bbb;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #e50914;
+      color: white;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="movie-detail-container" class="movie-detail-container">
+    <h1 class="movie-detail-header">영화 제목</h1>
+    <div class="movie-detail-content">
+      <img id="movie-poster" class="movie-poster" src="" alt="Poster">
+      <div class="movie-info">
+        <div><strong>평점:</strong> <span id="movie-vote-average"></span></div>
+        <div><strong>개봉일:</strong> <span id="movie-release-date"></span></div>
+        <div class="overview"><strong>개요:</strong> <span id="movie-overview"></span></div>
+      </div>
+    </div>
+    <a href="index.html" class="back-button">목록으로 돌아가기</a>
+  </div>
+
+  <script>
+    // 영화 ID를 URL에서 추출
+    const urlParams = new URLSearchParams(window.location.search);
+    const movieId = urlParams.get('id');
+
+    // 영화 상세 정보를 가져오는 함수
+    async function fetchMovieDetails() {
+      try {
+        const response = await fetch(`http://localhost:3000/movies/${movieId}`);
+        const movie = await response.json();
+
+        // 영화 상세 정보 표시
+        document.querySelector('.movie-detail-header').textContent = movie.original_title;
+        document.querySelector('#movie-poster').src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+        document.querySelector('#movie-vote-average').textContent = movie.vote_average;
+        document.querySelector('#movie-release-date').textContent = movie.release_date;
+        document.querySelector('#movie-overview').textContent = movie.overview;
+      } catch (error) {
+        console.error('영화 상세 정보를 가져오는 데 실패했습니다:', error);
+        alert('영화 상세 정보를 불러오는 데 문제가 발생했습니다.');
+      }
+    }
+
+    // 페이지 로드 시 영화 상세 정보 가져오기
+    window.onload = fetchMovieDetails;
+  </script>
+
+</body>
+</html>

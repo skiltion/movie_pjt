@@ -101,38 +101,41 @@
       }
     }
 
-    // 영화 데이터를 화면에 표시하는 함수
     function displayMovies(movies) {
-      const movieListContainer = document.getElementById('movie-list');
-      movieListContainer.innerHTML = ''; // 기존 내용 초기화
+  const movieListContainer = document.getElementById('movie-list');
+  movieListContainer.innerHTML = ''; // 기존 내용 초기화
 
-      movies.forEach(movie => {
-        const movieCard = document.createElement('div');
-        movieCard.classList.add('movie-card');
+  movies.forEach(movie => {
+    const movieCard = document.createElement('div');
+    movieCard.classList.add('movie-card');
 
-        const movieImg = document.createElement('img');
-        movieImg.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
-        movieImg.alt = movie.original_title;
+    const movieImg = document.createElement('img');
+    movieImg.src = `https://image.tmdb.org/t/p/w500${movie.poster_path}`;
+    movieImg.alt = movie.original_title;
 
-        const movieInfo = document.createElement('div');
-        movieInfo.classList.add('movie-info');
+    movieImg.addEventListener('click', () => {
+      window.location.href = `movie-detail.html?id=${movie.id}`;
+    });
 
-        const movieTitle = document.createElement('div');
-        movieTitle.classList.add('movie-title');
-        movieTitle.textContent = movie.original_title;
+    const movieInfo = document.createElement('div');
+    movieInfo.classList.add('movie-info');
 
-        const voteAverage = document.createElement('div');
-        voteAverage.classList.add('vote-average');
-        voteAverage.textContent = `평점: ${movie.vote_average}`;
+    const movieTitle = document.createElement('div');
+    movieTitle.classList.add('movie-title');
+    movieTitle.textContent = movie.original_title;
 
-        movieInfo.appendChild(movieTitle);
-        movieInfo.appendChild(voteAverage);
-        movieCard.appendChild(movieImg);
-        movieCard.appendChild(movieInfo);
+    const voteAverage = document.createElement('div');
+    voteAverage.classList.add('vote-average');
+    voteAverage.textContent = `평점: ${movie.vote_average}`;
 
-        movieListContainer.appendChild(movieCard);
-      });
-    }
+    movieInfo.appendChild(movieTitle);
+    movieInfo.appendChild(voteAverage);
+    movieCard.appendChild(movieImg);
+    movieCard.appendChild(movieInfo);
+
+    movieListContainer.appendChild(movieCard);
+  });
+}
 
     // 페이지 로드 시 영화 데이터 가져오기
     window.onload = fetchMovies;

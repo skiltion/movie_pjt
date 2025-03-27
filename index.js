@@ -32,3 +32,22 @@ app.get('/movies', (req, res) => {
       res.json(rows);
     });
   });
+
+// 영화 상세 정보 API 엔드포인트
+app.get('/movies/:id', (req, res) => {
+    const movieId = req.params.id;
+    const query = `SELECT * FROM movies WHERE id = ?`;
+  
+    db.get(query, [movieId], (err, row) => {
+      if (err) {
+        console.error('영화 상세 정보를 가져오는 데 실패했습니다:', err.message);
+        return res.status(500).send('서버 오류');
+      }
+  
+      if (row) {
+        res.json(row);
+      } else {
+        res.status(404).send('영화 정보를 찾을 수 없습니다.');
+      }
+    });
+  });
